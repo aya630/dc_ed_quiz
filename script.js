@@ -189,7 +189,7 @@ let correctAnswersCount = 0;
 let timerInterval;
 const QUIZ_DURATION = 30;
 let quizStartTime;
-
+let finalQuizTime = 0; // ★★★ この行を追加 ★★★
 
 // --- イベントリスナーを設定 ---
 startBtn.addEventListener('click', startQuiz);
@@ -307,6 +307,7 @@ function showResults() {
 
     const quizEndTime = Date.now();
     const totalTime = (quizEndTime - quizStartTime) / 1000;
+    finalQuizTime = totalTime; // ★★★ この行を追加 ★★★
     const accuracy = currentQuestions.length > 0 ? (correctAnswersCount / currentQuestions.length) * 100 : 0;
 
     // HTML要素に結果を反映させる
@@ -321,40 +322,33 @@ function showResults() {
 }
 
 function saveScoreAndShowRankings() {
-    const quizEndTime = Date.now();
-    const totalTime = (quizEndTime - quizStartTime) / 1000;
+    // ▼▼▼ この2行を削除します ▼▼▼
+    // const quizEndTime = Date.now();
+    // const totalTime = (quizEndTime - quizStartTime) / 1000;
+    
     const accuracy = currentQuestions.length > 0 ? (correctAnswersCount / currentQuestions.length) * 100 : 0;
 
     const now = new Date();
     
-    // ▼▼▼ この部分を変更 ▼▼▼
-    const hours = String(now.getHours()).padStart(2, '0'); // 時間を取得
-    const minutes = String(now.getMinutes()).padStart(2, '0'); // 分を取得
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
     const dateString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${hours}:${minutes}`;
-    // ▲▲▲ 変更ここまで ▲▲▲
 
     // 保存する記録（レコード）を作成
     const newRecord = {
         score: score,
         date: dateString,
         accuracy: accuracy,
-        time: totalTime
+        time: finalQuizTime // ★★★ ここを finalQuizTime に変更 ★★★
     };
 
-
+    // (これ以降のコードは変更ありません)
     let rankings = JSON.parse(localStorage.getItem(RANKING_STORAGE_KEY)) || [];
     rankings.push(newRecord);
-
-    // スコアの高い順にランキングを並び替え
     rankings.sort((a, b) => b.score - a.score);
-
-    // ランキングを上位10件までに制限（この数字は自由に変更できます）
     rankings = rankings.slice(0, 10);
-
     localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(rankings));
-
     renderRankingTable(rankings);
-
     rankingForm.classList.add('hidden');
 }
 
@@ -411,5 +405,6 @@ function showInitialRankings() {
 
 // ページのHTMLがすべて読み込まれたらランキングを表示する
 document.addEventListener('DOMContentLoaded', showInitialRankings);
+
 
 // ▲▲▲ コードの追加はここまで ▲▲▲
