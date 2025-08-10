@@ -408,3 +408,5 @@ document.addEventListener('DOMContentLoaded', showInitialRankings);
 
 
 // ▲▲▲ コードの追加はここまで ▲▲▲
+
+// (最後の一行を削除して、ここがファイルの終わりになる)
