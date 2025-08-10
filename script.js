@@ -402,11 +402,5 @@ function showInitialRankings() {
         rankingDisplay.classList.remove('hidden'); 
     }
 }
-
 // ページのHTMLがすべて読み込まれたらランキングを表示する
 document.addEventListener('DOMContentLoaded', showInitialRankings);
-
-
-// ▲▲▲ コードの追加はここまで ▲▲▲
-
-// (最後の一行を削除して、ここがファイルの終わりになる)
