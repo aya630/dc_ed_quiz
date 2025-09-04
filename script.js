@@ -162,24 +162,35 @@ function showQuestion() {
   startTimer();
 }
 
+// 修正版コード
 function startTimer() {
-  let timeLeft = QUIZ_DURATION;
+  const startTime = Date.now(); // タイマーの開始時刻を記録
   timerDisplayEl.classList.remove('warning');
-  timerEl.textContent = timeLeft.toFixed(2);
 
   timerInterval = setInterval(() => {
-    timeLeft -= 0.01;
+    // 経過時間をミリ秒で計算し、秒に変換
+    const elapsedTime = (Date.now() - startTime) / 1000;
+    
+    // 残り時間を計算
+    let timeLeft = QUIZ_DURATION - elapsedTime;
 
+    // 5秒以下になったら警告表示
     if (timeLeft <= 5.0) {
       timerDisplayEl.classList.add('warning');
     }
 
+    // 残り時間が0以下になった場合の処理
     if (timeLeft <= 0) {
-      timeLeft = 0;
+      timeLeft = 0; // 表示がマイナスにならないようにする
+      timerEl.textContent = timeLeft.toFixed(2);
+      clearInterval(timerInterval); // 必ずタイマーを停止する
       selectAnswer(false, null);
+      return; // 処理を終了
     }
+
+    // 残り時間を表示
     timerEl.textContent = timeLeft.toFixed(2);
-  }, 10);
+  }, 100); // 間隔は100ms（毎秒10回更新）程度で十分です
 }
 
 function selectAnswer(isCorrect, clickedButton) {
@@ -374,4 +385,5 @@ document.addEventListener('DOMContentLoaded', () => {
   totalQuestionCountEl.textContent = questions.length;
   showInitialDisplays();
 });
+
 
