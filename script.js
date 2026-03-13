@@ -148,21 +148,23 @@ function showQuestion() {
   } / ${currentQuestions.length}`;
   const question = currentQuestions[currentQuestionIndex];
   
-  // 【重要】ここに以前あった if (isEasyMode) { ...filter... } の処理は完全に削除しますわ
+  // ここは単純にコピーするだけにしますわ（絶対に filter は使いません！）
   let wrongAnswersForOptions = [...(question.wrongAnswers || [])];
 
   const options = [question.correctAnswer, ...wrongAnswersForOptions];
-  // 選択肢を番号順に並べ替える処理ですわ
+  
   options.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
 
   options.forEach((option) => {
     const button = document.createElement('button');
     button.textContent = option;
 
-    // Easyモードで既に正解した選択肢は「透明」にして空間を保ちますわ
     if (isEasyMode && option !== question.correctAnswer && answeredCorrectly.includes(option)) {
-        button.style.visibility = 'hidden'; 
-        button.disabled = true;             
+        // 見えない壁のように空間だけを確保しますわ
+        button.style.visibility = 'hidden';
+        button.style.opacity = '0';
+        button.style.pointerEvents = 'none';
+        button.disabled = true;
     } else {
         button.addEventListener('click', (event) =>
           selectAnswer(option === question.correctAnswer, event.target)
@@ -175,36 +177,6 @@ function showQuestion() {
   audioPlayer.play().catch((error) => console.log(error));
   startTimer();
 }
-
-  questionCounterEl.textContent = `Q. ${
-    currentQuestionIndex + 1
-  } / ${currentQuestions.length}`;
-  const question = currentQuestions[currentQuestionIndex];
-  let wrongAnswersForOptions = [...(question.wrongAnswers || [])];
-
-  if (isEasyMode) {
-    wrongAnswersForOptions = wrongAnswersForOptions.filter(
-      (answer) => !answeredCorrectly.includes(answer)
-    );
-  }
-
-  const options = [question.correctAnswer, ...wrongAnswersForOptions];
-  options.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
-
-  options.forEach((option) => {
-    const button = document.createElement('button');
-    button.textContent = option;
-    button.addEventListener('click', (event) =>
-      selectAnswer(option === question.correctAnswer, event.target)
-    );
-    optionsContainer.appendChild(button);
-  });
-
-  audioPlayer.src = question.songUrl;
-  audioPlayer.play().catch((error) => console.log(error));
-  startTimer();
-}
-
 // 修正版コード
 function startTimer() {
   const startTime = Date.now(); // タイマーの開始時刻を記録
@@ -453,4 +425,5 @@ document.addEventListener('DOMContentLoaded', () => {
   showInitialDisplays();
 
 });
+
 
