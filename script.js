@@ -147,23 +147,27 @@ function showQuestion() {
     currentQuestionIndex + 1
   } / ${currentQuestions.length}`;
   const question = currentQuestions[currentQuestionIndex];
+  
+  // 【重要】ここに以前あった if (isEasyMode) { ...filter... } の処理は完全に削除しますわ
   let wrongAnswersForOptions = [...(question.wrongAnswers || [])];
 
-  if (isEasyMode) {
-    wrongAnswersForOptions = wrongAnswersForOptions.filter(
-      (answer) => !answeredCorrectly.includes(answer)
-    );
-  }
-
   const options = [question.correctAnswer, ...wrongAnswersForOptions];
+  // 選択肢を番号順に並べ替える処理ですわ
   options.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
 
   options.forEach((option) => {
     const button = document.createElement('button');
     button.textContent = option;
-    button.addEventListener('click', (event) =>
-      selectAnswer(option === question.correctAnswer, event.target)
-    );
+
+    // Easyモードで既に正解した選択肢は「透明」にして空間を保ちますわ
+    if (isEasyMode && option !== question.correctAnswer && answeredCorrectly.includes(option)) {
+        button.style.visibility = 'hidden'; 
+        button.disabled = true;             
+    } else {
+        button.addEventListener('click', (event) =>
+          selectAnswer(option === question.correctAnswer, event.target)
+        );
+    }
     optionsContainer.appendChild(button);
   });
 
