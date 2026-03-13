@@ -147,6 +147,38 @@ function showQuestion() {
     currentQuestionIndex + 1
   } / ${currentQuestions.length}`;
   const question = currentQuestions[currentQuestionIndex];
+  
+  // 変更点：Easyモードの際に要素を削除（filter）する処理をなくしましたわ
+  let wrongAnswersForOptions = [...(question.wrongAnswers || [])];
+
+  const options = [question.correctAnswer, ...wrongAnswersForOptions];
+  // 選択肢を番号順に並べ替える処理ですわ
+  options.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
+  options.forEach((option) => {
+    const button = document.createElement('button');
+    button.textContent = option;
+
+    // 変更点：Easyモードで既に正解した選択肢は「透明」にして空間を保ちますわ
+    if (isEasyMode && option !== question.correctAnswer && answeredCorrectly.includes(option)) {
+        button.style.visibility = 'hidden'; // 見えなくします
+        button.disabled = true;             // 念のためクリックもできないようにしますわ
+    } else {
+        button.addEventListener('click', (event) =>
+          selectAnswer(option === question.correctAnswer, event.target)
+        );
+    }
+    optionsContainer.appendChild(button);
+  });
+
+  audioPlayer.src = question.songUrl;
+  audioPlayer.play().catch((error) => console.log(error));
+  startTimer();
+}
+  questionCounterEl.textContent = `Q. ${
+    currentQuestionIndex + 1
+  } / ${currentQuestions.length}`;
+  const question = currentQuestions[currentQuestionIndex];
   let wrongAnswersForOptions = [...(question.wrongAnswers || [])];
 
   if (isEasyMode) {
@@ -418,4 +450,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   totalQuestionCountEl.textContent = questions.length;
   showInitialDisplays();
+
 });
