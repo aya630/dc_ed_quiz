@@ -148,7 +148,7 @@ function showQuestion() {
   } / ${currentQuestions.length}`;
   const question = currentQuestions[currentQuestionIndex];
   
-  // 変更点：Easyモードの際に要素を削除（filter）する処理をなくしましたわ
+  // 【重要】ここに以前あった if (isEasyMode) { ...filter... } の処理は完全に削除しますわ
   let wrongAnswersForOptions = [...(question.wrongAnswers || [])];
 
   const options = [question.correctAnswer, ...wrongAnswersForOptions];
@@ -159,10 +159,10 @@ function showQuestion() {
     const button = document.createElement('button');
     button.textContent = option;
 
-    // 変更点：Easyモードで既に正解した選択肢は「透明」にして空間を保ちますわ
+    // Easyモードで既に正解した選択肢は「透明」にして空間を保ちますわ
     if (isEasyMode && option !== question.correctAnswer && answeredCorrectly.includes(option)) {
-        button.style.visibility = 'hidden'; // 見えなくします
-        button.disabled = true;             // 念のためクリックもできないようにしますわ
+        button.style.visibility = 'hidden'; 
+        button.disabled = true;             
     } else {
         button.addEventListener('click', (event) =>
           selectAnswer(option === question.correctAnswer, event.target)
@@ -175,6 +175,7 @@ function showQuestion() {
   audioPlayer.play().catch((error) => console.log(error));
   startTimer();
 }
+
   questionCounterEl.textContent = `Q. ${
     currentQuestionIndex + 1
   } / ${currentQuestions.length}`;
@@ -452,3 +453,4 @@ document.addEventListener('DOMContentLoaded', () => {
   showInitialDisplays();
 
 });
+
